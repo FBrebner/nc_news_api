@@ -9,7 +9,6 @@ exports.seed = (knex, Promise) => {
     })
     .then(() => { return knex('topics').insert(topicsData).returning('*')
     })
-    //.then((topicRows) => console.log(topicRows))
     .then(() => { return knex('users').insert(usersData).returning('*')
   })
   .then(() => {const formattedArticles = timestampToDate(articlesData)
