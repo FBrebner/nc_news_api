@@ -1,18 +1,15 @@
 exports.up = function(knex, Promise) {
     console.log("creating comments table...");
     return knex.schema.createTable("comments", commentsTable => {
-      commentsTable.increment("comment_id").primary();
-      commentTables
-      .foreign("author")
+      commentsTable.increments("comment_id").primary();
+      commentsTable
+      .string("author")
       .references("username")
       .inTable("users");
-      commentTables
-      .foreign("topic")
-      .references("topic")
-      .inTable("topics");
+      commentsTable.integer('article_id').notNullable;
       commentsTable.integer("votes").defaultTo(0).notNullable;
-      commentTables.date('created_at').defaultTo(knex.fn.now())
-      commentsTable.string("body").notNullable;
+      commentsTable.date('created_at').defaultTo(knex.fn.now())
+      commentsTable.text("body").notNullable;
     });
   };
   

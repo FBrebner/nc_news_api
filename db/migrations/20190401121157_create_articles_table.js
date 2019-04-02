@@ -1,19 +1,19 @@
 exports.up = function(knex, Promise) {
   console.log("creating articles table...");
   return knex.schema.createTable("articles", articlesTable => {
-    articlesTable.increment("article_id").primary();
+    articlesTable.increments("article_id").primary();
     articlesTable.string("title").notNullable;
-    articlesTable.string("body").notNullable;
+    articlesTable.text("body").notNullable;
     articlesTable.integer("votes").defaultTo(0).notNullable;
-    articleTables
-      .foreign("topic")
-      .references("topic")
+    articlesTable
+      .string("topic")
+      .references("slug")
       .inTable("topics");
-    articleTables
-      .foreign("author")
+    articlesTable
+      .string("author")
       .references("username")
       .inTable("users");
-    articleTables.date('created_at').defaultTo(knex.fn.now())
+    articlesTable.date('created_at').defaultTo(knex.fn.now())
   });
 };
 
