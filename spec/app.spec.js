@@ -39,6 +39,7 @@ describe("/", () => {
                   expect(article).to.contain.keys(
                     "author",
                     "title",
+                    "body",
                     "article_id",
                     "topic",
                     "created_at",
@@ -57,6 +58,7 @@ describe("/", () => {
                   title: 'Living in the shadow of a great man',
                   topic: 'mitch',
                   article_id: 1,
+                  body: 'I find this existence challenging',
                   author: 'butter_bridge',
                   comment_count: '13',
                   created_at: "2018-11-15T00:00:00.000Z",
@@ -65,6 +67,7 @@ describe("/", () => {
                 expect(body.articles[body.articles.length-1]).to.eql({
                   title: 'Moustache',
                   topic: 'mitch',
+                  body: 'Have you seen the size of that thing?',
                   article_id: 12,
                   author: 'butter_bridge',
                   comment_count: '0',
@@ -99,6 +102,7 @@ describe("/", () => {
                 expect(body.articles[body.articles.length-1]).to.eql({
                   title: 'A',
                   topic: 'mitch',
+                  body: 'Delicious tin of cat food',
                   article_id: 6,
                   author: 'icellusedkars',
                   comment_count: '1',
@@ -108,6 +112,7 @@ describe("/", () => {
                 expect(body.articles[0]).to.eql({
                   title: 'Z',
                   topic: 'mitch',
+                  body: 'I was hungry.',
                   article_id: 7,
                   author: 'icellusedkars',
                   created_at: "1994-11-21T00:00:00.000Z",
@@ -125,6 +130,7 @@ describe("/", () => {
                   title: 'Living in the shadow of a great man',
                   topic: 'mitch',
                   article_id: 1,
+                  body: 'I find this existence challenging',
                   author: 'butter_bridge',
                   comment_count: '13',
                   created_at: "2018-11-15T00:00:00.000Z",
@@ -134,6 +140,7 @@ describe("/", () => {
                   title: 'Moustache',
                   topic: 'mitch',
                   article_id: 12,
+                  body: 'Have you seen the size of that thing?',
                   author: 'butter_bridge',
                   comment_count: '0',
                   created_at: "1974-11-26T00:00:00.000Z",
@@ -143,25 +150,47 @@ describe("/", () => {
           });
         });
       })
-      describe("DEFAULT BEHAVIOURS", () => {
-        it("GET status:200 returns a single article object specified by article_id", () => {
-          return request
-            .get("/api/articles/1")
-            .expect(200)
-            .then(({ body }) => {
-              console.log(body.article);
-              expect(body.article).to.eql({
-                title: 'Living in the shadow of a great man',
-                topic: 'mitch',
-                article_id: 1,
-                author: 'butter_bridge',
-                comment_count: '13',
-                created_at: "2018-11-15T00:00:00.000Z",
-                votes:100,
-              })
-            });
-        });
+      describe("/:article_id", () => {
+        describe("DEFAULT BEHAVIOURS", () => {
+          it("GET status:200 returns a single article object specified by article_id", () => {
+            return request
+              .get("/api/articles/1")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.article).to.eql({
+                  title: 'Living in the shadow of a great man',
+                  topic: 'mitch',
+                  body: 'I find this existence challenging',
+                  article_id: 1,
+                  author: 'butter_bridge',
+                  comment_count: '13',
+                  created_at: "2018-11-15T00:00:00.000Z",
+                  votes:100,
+                })
+              });
+          });
+          it("PATCH status:200 returns a single article object with a new vote value", () => {
+            const input = { inc_votes: 1 }
+            return request
+              .patch("/api/articles/1")
+              .send(input)
+              .expect(200)
+              .then(({ body }) => {
+                console.log(body.article);
+                expect(body.article).to.eql({
+                  title: 'Living in the shadow of a great man',
+                  topic: 'mitch',
+                  article_id: 1,
+                  author: 'butter_bridge',
+                  body: 'I find this existence challenging',
+                  created_at: "2018-11-15T00:00:00.000Z",
+                  votes:101,
+                })
+              });
+          });
+        })
       })
+      
     });
   });
 });
