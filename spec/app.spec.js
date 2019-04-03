@@ -94,7 +94,7 @@ describe("/", () => {
                 expect(body.articles.length).to.equal(11);
               });
           });
-          it("GET status: 200 returns array of articles written on a specific topic", () => {
+          it("GET status: 200 returns array of articles sorted by a specified category", () => {
             return request
               .get("/api/articles?sort_by=title")
               .expect(200)
@@ -196,16 +196,62 @@ describe("/", () => {
           });
         });
         describe("/comments", () => {
+          describe("DEFAULT BEHAVIOURS", () => {
           it("GET status:200 returns an array of comments from a specified article", () => {
             return request
               .get("/api/articles/1/comments")
               .expect(200)
               .then(({ body }) => {
-                expect(body.article.length).to.eql(13);
-                body.article.forEach(article => {
-                expect(article).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
+                expect(body.comments.length).to.eql(13);
+                body.comments.forEach(comment => {
+                expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
                 });
               });
+          });
+        });
+          describe("QUERIES", () => {
+            it("GET status: 200 returns array of comments sorted by a specified category", () => {
+              return request
+                .get("/api/articles/1/comments?sort_by=comment_id")
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.comments[body.comments.length-1]).to.eql({
+                    comment_id: 2,
+                    votes: 14,
+                    created_at: '2016-11-22T00:00:00.000Z',
+                    body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+                    author: 'butter_bridge' 
+                  });
+                  expect(body.comments[0]).to.eql({
+                    comment_id: 18,
+                    votes: 16,
+                    created_at: '2000-11-26T00:00:00.000Z',
+                    body: 'This morning, I showered for nine minutes.',
+                    author: 'butter_bridge' 
+                  });
+                });
+            });
+            it("GET status: 200 returns array of comments in a specified order", () => {
+              return request
+                .get("/api/articles/1/comments?order=asc")
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.comments[body.comments.length - 1]).to.eql({
+                    comment_id: 2,
+                    votes: 14,
+                    created_at: '2016-11-22T00:00:00.000Z',
+                    body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+                    author: 'butter_bridge' 
+                  });
+                  expect(body.comments[0]).to.eql({
+                    comment_id: 18,
+                    votes: 16,
+                    created_at: '2000-11-26T00:00:00.000Z',
+                    body: 'This morning, I showered for nine minutes.',
+                    author: 'butter_bridge' 
+                  });
+                });
+            });
           });
         })
       });

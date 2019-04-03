@@ -17,5 +17,5 @@ exports.deleteSingleArticle = (req, res, next) => {
 };
 
 exports.getArticleComments = (req, res, next) => {
-    selectArticleComments(req.params.article_id).then(article =>res.status(200).json({ article }))
+    selectArticleComments(req.params.article_id, req.query).then(comments =>res.status(200).json({ comments }))
 };

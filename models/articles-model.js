@@ -39,10 +39,11 @@ exports.removeSingleArticle = (articleID) => {
     .del()
 };
 
-exports.selectArticleComments = ( articleID ) => {
+exports.selectArticleComments = ( articleID, {sort_by = 'created_at',order = 'desc'} ) => {
     return connection('comments')
     .select('author', 'body', 'created_at', 'votes', 'comment_id')
     .from('comments')
     .where('article_id', '=', articleID)
+    .orderBy(sort_by, order)
 };
 
