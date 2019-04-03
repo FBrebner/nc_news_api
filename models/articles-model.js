@@ -1,7 +1,7 @@
 const connection = require('../db/connection');
 
 exports.selectArticles = ({sort_by = 'created_at',order = 'desc', ...otherQueries}) => {
-   return connection
+   return connection('articles')
     .select('articles.author', 'articles.body', 'title', 'articles.article_id', 'topic', 'articles.created_at', 'articles.votes')
     .from('articles')
     .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
@@ -13,7 +13,7 @@ exports.selectArticles = ({sort_by = 'created_at',order = 'desc', ...otherQuerie
 };
 
 exports.selectSingleArticle = ( articleID ) => {
-    return connection
+    return connection('articles')
     .select('articles.author', 'articles.body', 'title', 'articles.article_id', 'topic', 'articles.created_at', 'articles.votes')
     .from('articles')
     .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
@@ -23,7 +23,7 @@ exports.selectSingleArticle = ( articleID ) => {
 };
 
 exports.updateSingleArticle = ( articleID, voteChange ) => {
-    return connection
+    return connection('articles')
     .from('articles')
     .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
     .groupBy('articles.article_id')
@@ -33,4 +33,10 @@ exports.updateSingleArticle = ( articleID, voteChange ) => {
     .count('comment_id AS comment_count')
 };
 
-//'article_id', 'author', 'created_at', 'title', 'topic', 'votes', 'comment_count'
+exports.removeSingleArticle = (articleID) => {
+    console.log(articleID);
+    return connection('articles')
+    .where('article_id', '=', articleID)
+    .del()
+};
+

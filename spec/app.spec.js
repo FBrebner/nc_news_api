@@ -55,25 +55,25 @@ describe("/", () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body.articles[0]).to.eql({
-                  title: 'Living in the shadow of a great man',
-                  topic: 'mitch',
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
                   article_id: 1,
-                  body: 'I find this existence challenging',
-                  author: 'butter_bridge',
-                  comment_count: '13',
+                  body: "I find this existence challenging",
+                  author: "butter_bridge",
+                  comment_count: "13",
                   created_at: "2018-11-15T00:00:00.000Z",
-                  votes:100,
-                })
-                expect(body.articles[body.articles.length-1]).to.eql({
-                  title: 'Moustache',
-                  topic: 'mitch',
-                  body: 'Have you seen the size of that thing?',
+                  votes: 100
+                });
+                expect(body.articles[body.articles.length - 1]).to.eql({
+                  title: "Moustache",
+                  topic: "mitch",
+                  body: "Have you seen the size of that thing?",
                   article_id: 12,
-                  author: 'butter_bridge',
-                  comment_count: '0',
+                  author: "butter_bridge",
+                  comment_count: "0",
                   created_at: "1974-11-26T00:00:00.000Z",
-                  votes:0,
-                })
+                  votes: 0
+                });
               });
           });
         });
@@ -99,25 +99,25 @@ describe("/", () => {
               .get("/api/articles?sort_by=title")
               .expect(200)
               .then(({ body }) => {
-                expect(body.articles[body.articles.length-1]).to.eql({
-                  title: 'A',
-                  topic: 'mitch',
-                  body: 'Delicious tin of cat food',
+                expect(body.articles[body.articles.length - 1]).to.eql({
+                  title: "A",
+                  topic: "mitch",
+                  body: "Delicious tin of cat food",
                   article_id: 6,
-                  author: 'icellusedkars',
-                  comment_count: '1',
+                  author: "icellusedkars",
+                  comment_count: "1",
                   created_at: "1998-11-20T00:00:00.000Z",
-                  votes:0,
+                  votes: 0
                 });
                 expect(body.articles[0]).to.eql({
-                  title: 'Z',
-                  topic: 'mitch',
-                  body: 'I was hungry.',
+                  title: "Z",
+                  topic: "mitch",
+                  body: "I was hungry.",
                   article_id: 7,
-                  author: 'icellusedkars',
+                  author: "icellusedkars",
                   created_at: "1994-11-21T00:00:00.000Z",
-                  votes:0,
-                  comment_count: '0',
+                  votes: 0,
+                  comment_count: "0"
                 });
               });
           });
@@ -126,30 +126,30 @@ describe("/", () => {
               .get("/api/articles?order=asc")
               .expect(200)
               .then(({ body }) => {
-                expect(body.articles[body.articles.length-1]).to.eql({
-                  title: 'Living in the shadow of a great man',
-                  topic: 'mitch',
+                expect(body.articles[body.articles.length - 1]).to.eql({
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
                   article_id: 1,
-                  body: 'I find this existence challenging',
-                  author: 'butter_bridge',
-                  comment_count: '13',
+                  body: "I find this existence challenging",
+                  author: "butter_bridge",
+                  comment_count: "13",
                   created_at: "2018-11-15T00:00:00.000Z",
-                  votes:100,
+                  votes: 100
                 });
                 expect(body.articles[0]).to.eql({
-                  title: 'Moustache',
-                  topic: 'mitch',
+                  title: "Moustache",
+                  topic: "mitch",
                   article_id: 12,
-                  body: 'Have you seen the size of that thing?',
-                  author: 'butter_bridge',
-                  comment_count: '0',
+                  body: "Have you seen the size of that thing?",
+                  author: "butter_bridge",
+                  comment_count: "0",
                   created_at: "1974-11-26T00:00:00.000Z",
-                  votes:0,
+                  votes: 0
                 });
               });
           });
         });
-      })
+      });
       describe("/:article_id", () => {
         describe("DEFAULT BEHAVIOURS", () => {
           it("GET status:200 returns a single article object specified by article_id", () => {
@@ -158,39 +158,44 @@ describe("/", () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body.article).to.eql({
-                  title: 'Living in the shadow of a great man',
-                  topic: 'mitch',
-                  body: 'I find this existence challenging',
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
+                  body: "I find this existence challenging",
                   article_id: 1,
-                  author: 'butter_bridge',
-                  comment_count: '13',
+                  author: "butter_bridge",
+                  comment_count: "13",
                   created_at: "2018-11-15T00:00:00.000Z",
-                  votes:100,
-                })
+                  votes: 100
+                });
               });
           });
           it("PATCH status:200 returns a single article object with a new vote value", () => {
-            const input = { inc_votes: 1 }
+            const input = { inc_votes: 1 };
             return request
               .patch("/api/articles/1")
               .send(input)
               .expect(200)
               .then(({ body }) => {
-                console.log(body.article);
                 expect(body.article).to.eql({
-                  title: 'Living in the shadow of a great man',
-                  topic: 'mitch',
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
                   article_id: 1,
-                  author: 'butter_bridge',
-                  body: 'I find this existence challenging',
+                  author: "butter_bridge",
+                  body: "I find this existence challenging",
                   created_at: "2018-11-15T00:00:00.000Z",
-                  votes:101,
-                })
+                  votes: 101
+                });
               });
           });
-        })
-      })
-      
+          it("DELETE status:204 removes an article and returns no content", () => {
+            const input = { inc_votes: 1 };
+            return request
+              .delete("/api/articles/1")
+              .send(input)
+              .expect(204);
+          });
+        });
+      });
     });
   });
 });
