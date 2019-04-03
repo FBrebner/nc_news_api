@@ -34,9 +34,15 @@ exports.updateSingleArticle = ( articleID, voteChange ) => {
 };
 
 exports.removeSingleArticle = (articleID) => {
-    console.log(articleID);
     return connection('articles')
     .where('article_id', '=', articleID)
     .del()
+};
+
+exports.selectArticleComments = ( articleID ) => {
+    return connection('comments')
+    .select('author', 'body', 'created_at', 'votes', 'comment_id')
+    .from('comments')
+    .where('article_id', '=', articleID)
 };
 

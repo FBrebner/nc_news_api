@@ -195,6 +195,19 @@ describe("/", () => {
               .expect(204);
           });
         });
+        describe("/comments", () => {
+          it("GET status:200 returns an array of comments from a specified article", () => {
+            return request
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.article.length).to.eql(13);
+                body.article.forEach(article => {
+                expect(article).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
+                });
+              });
+          });
+        })
       });
     });
   });

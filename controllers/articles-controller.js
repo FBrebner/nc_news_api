@@ -1,4 +1,4 @@
-const { selectArticles, selectSingleArticle, updateSingleArticle, removeSingleArticle } = require('../models/articles-model')
+const { selectArticles, selectSingleArticle, updateSingleArticle, removeSingleArticle, selectArticleComments } = require('../models/articles-model')
 
 exports.getArticles = (req, res, next) => {
     selectArticles(req.query).then(articles =>res.status(200).json({ articles }))
@@ -14,4 +14,8 @@ exports.patchSingleArticle = (req, res, next) => {
 
 exports.deleteSingleArticle = (req, res, next) => {
     removeSingleArticle(req.params.article_id).then(() =>res.status(204).json())
+};
+
+exports.getArticleComments = (req, res, next) => {
+    selectArticleComments(req.params.article_id).then(article =>res.status(200).json({ article }))
 };
