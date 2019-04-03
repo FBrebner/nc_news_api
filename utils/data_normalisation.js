@@ -15,8 +15,10 @@ exports.nameAndIDs = (arr, category, idCategory) => {
 
 exports.replaceCategoryWithID = (arr, category, idCategory, nameIdPairs) => {
     arr.forEach((element) => {
+        if (element[category]) {
         element[idCategory] = nameIdPairs[element[category]];
         delete element[category]
+        }
         if(element['created_by']) {
             element['author']=element['created_by']
             delete element['created_by'];
