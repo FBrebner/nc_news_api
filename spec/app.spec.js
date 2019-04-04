@@ -256,5 +256,29 @@ describe("/", () => {
         })
       });
     });
+    describe("/comments", () => {
+      describe("/:comment_id", () => {
+        describe('DEFAULT BEHAVIOURS', () => {
+          it("PATCH status:200 returns a single comment object with a new vote value", () => {
+            const input = { inc_votes: 11 };
+            return request
+              .patch("/api/comments/1")
+              .send(input)
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comment).to.eql({
+                  comment_id: 1,
+                  author: "butter_bridge",
+                  article_id: 9,
+                  votes: 27,
+                  body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                  created_at: "2017-11-22T00:00:00.000Z",
+                });
+              });
+          });
+        });
+      })
+    })
   });
 });
+
