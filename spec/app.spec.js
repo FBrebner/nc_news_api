@@ -34,7 +34,6 @@ describe("/", () => {
               .get("/api/articles")
               .expect(200)
               .then(({ body }) => {
-                console.log(body.articles);
                 body.articles.forEach(article => {
                   expect(article).to.contain.keys(
                     "author",
@@ -278,6 +277,24 @@ describe("/", () => {
             return request
               .delete("/api/comments/1")
               .expect(204);
+          });
+        });
+      })
+    })
+    describe("/users", () => {
+      describe("/:username", () => {
+        describe('DEFAULT BEHAVIOURS', () => {
+          it("GET status:200 returns a single user object specified by username", () => {
+            return request
+              .get("/api/users/icellusedkars")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.user).to.eql({
+                  username: 'icellusedkars',
+                  avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
+                  name: 'sam',
+                });
+              });
           });
         });
       })

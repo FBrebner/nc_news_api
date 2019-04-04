@@ -84,7 +84,6 @@ describe('nameAndIDs', () => {
             created_at: 1416140514171,
           },]
         output = {'Sony Vaio; or, The Laptop': 1}
-        console.log(nameAndIDs(input, 'title', 'article_id'));
         expect(nameAndIDs(input, 'title', 'article_id')).to.eql(output)
     });
     it('creates a name and ID pair for multiple articles', () => {
