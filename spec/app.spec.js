@@ -306,7 +306,6 @@ describe("/", () => {
                 .send(input)
                 .expect(201)
                 .then(({ body }) => {
-                  console.log(body.comment);
                   expect(body.comment).to.eql({
                     article_id: 1,
                     author: "butter_bridge",
@@ -409,6 +408,17 @@ describe("/", () => {
                 expect(body.msg).to.equal("Method Not Allowed");
               });
             })
+            it("POST status:422 for nonexistent username", () => {
+              input = {author: "Frank", body: "This is yet another fake comment"}
+              return request
+                .post("/api/articles/1/comments")
+                .send(input)
+                .expect(422)
+                .then(({ body }) => {
+                  console.log(body.error);
+                  expect(body.error).to.eql("database error: 23503");
+                });
+            });
           });
         });
       });
