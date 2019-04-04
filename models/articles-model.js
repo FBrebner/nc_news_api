@@ -47,3 +47,11 @@ exports.selectArticleComments = ( articleID, {sort_by = 'created_at',order = 'de
     .orderBy(sort_by, order)
 };
 
+exports.addArticleComment = ( articleID, comment ) => {
+    return connection('comments')
+    .into('comments')
+    .where('article_id', '=', articleID )
+    .insert({...comment, article_id : articleID })
+    .returning('*')
+}
+

@@ -6,7 +6,7 @@ exports.up = function(knex, Promise) {
       .string("author")
       .references("username")
       .inTable("users");
-      commentsTable.integer('article_id').notNullable;
+      commentsTable.integer('article_id').references('articles.article_id').onDelete('CASCADE').notNullable;
       commentsTable.integer("votes").defaultTo(0).notNullable;
       commentsTable.date('created_at').defaultTo(knex.fn.now())
       commentsTable.text("body").notNullable;

@@ -25,6 +25,16 @@ describe("/", () => {
             });
         });
       });
+      describe("ERRORS", () => {
+        it("INVALID METHOD status: 405 for invalid method", () => {
+          return request
+          .put("/api/topics")
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Method Not Allowed");
+          });
+        })
+      });
     });
     describe("/articles", () => {
       describe("/", () => {
@@ -148,6 +158,24 @@ describe("/", () => {
               });
           });
         });
+        describe('ERRORS', () => {
+          it("GET status:400 for invalid query", () => {
+            return request
+              .get("/api/articles?Snake=5")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.error).to.equal("database error: 42703");
+              });
+          });
+          it("INVALID METHOD status: 405 for invalid method", () => {
+            return request
+            .put("/api/articles")
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("Method Not Allowed");
+            });
+          })
+        });
       });
       describe("/:article_id", () => {
         describe("DEFAULT BEHAVIOURS", () => {
@@ -186,45 +214,130 @@ describe("/", () => {
                 });
               });
           });
-          it("DELETE status:204 removes an article and returns no content", () => {
-            return request
-              .delete("/api/articles/1")
-              .expect(204);
+          it("DELETE status:204 removes an article and returns non content", () => {
+            return request.delete("/api/articles/1").expect(204);
           });
+        });
+        describe("ERRORS", () => {
+          it("GET status:404 for non-existent article_id", () => {
+            return request
+              .get("/api/articles/200000")
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Value Not Found");
+              });
+          });
+          it("PATCH status:404 for non-existent article_id", () => {
+            const input = { inc_votes: 1 };
+            return request
+              .patch("/api/articles/200000")
+              .send(input)
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Value Not Found");
+              });
+          });
+          it("DELETE status:404 for non-existent article_id", () => {
+            return request
+              .delete("/api/articles/200000")
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Value Not Found");
+              });
+          });
+          it("GET status:400 for invalid article_id", () => {
+            return request
+              .get("/api/articles/Frank")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Invalid Value");
+              });
+          });
+          it("PATCH status:400 for invalid article_id", () => {
+            const input = { inc_votes: 1 };
+            return request
+              .patch("/api/articles/Frank")
+              .send(input)
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Invalid Value");
+              });
+          });
+          it("DELETE status:400 for invalid article_id", () => {
+            return request
+              .delete("/api/articles/Frank")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Invalid Value");
+              });
+          });
+          it("INVALID METHOD status: 405 for invalid method", () => {
+            return request
+            .put("/api/articles/1")
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("Method Not Allowed");
+            });
+          })
         });
         describe("/comments", () => {
           describe("DEFAULT BEHAVIOURS", () => {
-          it("GET status:200 returns an array of comments from a specified article", () => {
-            return request
-              .get("/api/articles/1/comments")
-              .expect(200)
-              .then(({ body }) => {
-                expect(body.comments.length).to.eql(13);
-                body.comments.forEach(comment => {
-                expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
+            it("GET status:200 returns an array of comments from a specified article", () => {
+              return request
+                .get("/api/articles/1/comments")
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.comments.length).to.eql(13);
+                  body.comments.forEach(comment => {
+                    expect(comment).to.contain.keys(
+                      "comment_id",
+                      "votes",
+                      "created_at",
+                      "author",
+                      "body"
+                    );
+                  });
                 });
-              });
+            });
+            it("POST status:201 returns a new comment that has been added to a specified article", () => {
+              input = {author: "butter_bridge", body: "This is a fake comment"}
+              return request
+                .post("/api/articles/1/comments")
+                .send(input)
+                .expect(201)
+                .then(({ body }) => {
+                  console.log(body.comment);
+                  expect(body.comment).to.eql({
+                    article_id: 1,
+                    author: "butter_bridge",
+                   body: 'This is a fake comment',
+                   comment_id: 19,
+                   created_at: "2019-04-03T23:00:00.000Z",
+                   votes: 0,
+                  });
+                });
+            });
           });
-        });
           describe("QUERIES", () => {
             it("GET status: 200 returns array of comments sorted by a specified category", () => {
               return request
                 .get("/api/articles/1/comments?sort_by=comment_id")
                 .expect(200)
                 .then(({ body }) => {
-                  expect(body.comments[body.comments.length-1]).to.eql({
+                  expect(body.comments[body.comments.length - 1]).to.eql({
                     comment_id: 2,
                     votes: 14,
-                    created_at: '2016-11-22T00:00:00.000Z',
-                    body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
-                    author: 'butter_bridge' 
+                    created_at: "2016-11-22T00:00:00.000Z",
+                    body:
+                      "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                    author: "butter_bridge"
                   });
                   expect(body.comments[0]).to.eql({
                     comment_id: 18,
                     votes: 16,
-                    created_at: '2000-11-26T00:00:00.000Z',
-                    body: 'This morning, I showered for nine minutes.',
-                    author: 'butter_bridge' 
+                    created_at: "2000-11-26T00:00:00.000Z",
+                    body: "This morning, I showered for nine minutes.",
+                    author: "butter_bridge"
                   });
                 });
             });
@@ -236,26 +349,73 @@ describe("/", () => {
                   expect(body.comments[body.comments.length - 1]).to.eql({
                     comment_id: 2,
                     votes: 14,
-                    created_at: '2016-11-22T00:00:00.000Z',
-                    body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
-                    author: 'butter_bridge' 
+                    created_at: "2016-11-22T00:00:00.000Z",
+                    body:
+                      "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                    author: "butter_bridge"
                   });
                   expect(body.comments[0]).to.eql({
                     comment_id: 18,
                     votes: 16,
-                    created_at: '2000-11-26T00:00:00.000Z',
-                    body: 'This morning, I showered for nine minutes.',
-                    author: 'butter_bridge' 
+                    created_at: "2000-11-26T00:00:00.000Z",
+                    body: "This morning, I showered for nine minutes.",
+                    author: "butter_bridge"
                   });
                 });
             });
           });
-        })
+          describe("ERRORS", () => {
+            it("GET status:400 for invalid article_id", () => {
+              return request
+                .get("/api/articles/Frank/comments")
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.equal("Invalid Value");
+                });
+            });
+            it("GET status:404 for non-existent article_id", () => {
+              return request
+                .get("/api/articles/200000/comments")
+                .expect(404)
+                .then(({ body }) => {
+                  expect(body.msg).to.equal("Value Not Found");
+                });
+            });
+            it("POST status:400 for invalid article_id", () => {
+              input = {author: "butter_bridge", body: "This is a fake comment"}
+              return request
+                .post("/api/articles/Frank/comments")
+                .send(input)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.equal("Invalid Value");
+                });
+            });
+            it("POST status:404 for non-existent article_id", () => {
+              input = {author: "butter_bridge", body: "This is a fake comment"}
+              return request
+                .post("/api/articles/200000/comments")
+                .send(input)
+                .expect(404)
+                .then(({ body }) => {
+                  expect(body.error).to.equal("database error: 23503");
+                });
+            });
+            it("INVALID METHOD status: 405 for invalid method", () => {
+              return request
+              .put("/api/articles/1/comments")
+              .expect(405)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Method Not Allowed");
+              });
+            })
+          });
+        });
       });
     });
     describe("/comments", () => {
       describe("/:comment_id", () => {
-        describe('DEFAULT BEHAVIOURS', () => {
+        describe("DEFAULT BEHAVIOURS", () => {
           it("PATCH status:200 returns a single comment object with a new vote value", () => {
             const input = { inc_votes: 11 };
             return request
@@ -268,37 +428,110 @@ describe("/", () => {
                   author: "butter_bridge",
                   article_id: 9,
                   votes: 27,
-                  body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-                  created_at: "2017-11-22T00:00:00.000Z",
+                  body:
+                    "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                  created_at: "2017-11-22T00:00:00.000Z"
                 });
               });
           });
           it("DELETE status:204 removes a comment and returns no content", () => {
-            return request
-              .delete("/api/comments/1")
-              .expect(204);
+            return request.delete("/api/comments/1").expect(204);
           });
         });
-      })
-    })
+        describe("ERRORS", () => {
+          it("PATCH status:404 for non-existent comment_id", () => {
+            const input = { inc_votes: 1 };
+            return request
+              .patch("/api/comments/200000")
+              .send(input)
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Value Not Found");
+              });
+          });
+          it("DELETE status:404 for non-existent comment_id", () => {
+            return request
+              .delete("/api/comments/200000")
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Value Not Found");
+              });
+          });
+          it("PATCH status:400 for invalid article_id", () => {
+            const input = { inc_votes: 1 };
+            return request
+              .patch("/api/comments/Frank")
+              .send(input)
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Invalid Value");
+              });
+          });
+          it("DELETE status:400 for invalid article_id", () => {
+            return request
+              .delete("/api/comments/Frank")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Invalid Value");
+              });
+          });
+          it("INVALID METHOD status: 405 for invalid method", () => {
+            return request
+            .put("/api/comments/1")
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("Method Not Allowed");
+            });
+          })
+        });
+      });
+    });
     describe("/users", () => {
       describe("/:username", () => {
-        describe('DEFAULT BEHAVIOURS', () => {
+        describe("DEFAULT BEHAVIOURS", () => {
           it("GET status:200 returns a single user object specified by username", () => {
             return request
               .get("/api/users/icellusedkars")
               .expect(200)
               .then(({ body }) => {
                 expect(body.user).to.eql({
-                  username: 'icellusedkars',
-                  avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
-                  name: 'sam',
+                  username: "icellusedkars",
+                  avatar_url:
+                    "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+                  name: "sam"
                 });
               });
           });
         });
-      })
-    })
+        describe("ERRORS", () => {
+          it("GET status:404 for non-existent username", () => {
+            return request
+              .get("/api/users/200000")
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Value Not Found");
+              });
+          });
+          it("INVALID METHOD status: 405 for invalid method", () => {
+            return request
+            .put("/api/users/1")
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("Method Not Allowed");
+            });
+          })
+        });
+      });
+    });
   });
 });
-
+describe("/*", () => {
+  it("GET status:404 for invalid path request", () => {
+    return request
+      .get("/newspapers")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).to.equal("Route Not Found");
+      });
+  });
+});
