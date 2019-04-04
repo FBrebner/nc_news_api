@@ -188,10 +188,8 @@ describe("/", () => {
               });
           });
           it("DELETE status:204 removes an article and returns no content", () => {
-            const input = { inc_votes: 1 };
             return request
               .delete("/api/articles/1")
-              .send(input)
               .expect(204);
           });
         });
@@ -275,6 +273,11 @@ describe("/", () => {
                   created_at: "2017-11-22T00:00:00.000Z",
                 });
               });
+          });
+          it("DELETE status:204 removes a comment and returns no content", () => {
+            return request
+              .delete("/api/comments/1")
+              .expect(204);
           });
         });
       })

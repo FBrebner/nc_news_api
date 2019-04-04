@@ -10,3 +10,9 @@ exports.updateSingleComment = ( commentID, voteChange ) => {
     .returning('*')
     .count('comment_id AS comment_count')
 };
+
+exports.removeSingleComment = (commentID) => {
+    return connection('comments')
+    .where('comment_id', '=', commentID)
+    .del()
+};
