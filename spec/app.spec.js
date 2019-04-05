@@ -11,6 +11,14 @@ const request = supertest(app);
 describe("/", () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
+  it("returns a json object of all the available endpoints", () => {
+    return request
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).to.contain.keys("GET /api");
+      });
+  });
   describe("/api", () => {
     describe("/topics", () => {
       describe("DEFAULT BEHAVIOURS", () => {
@@ -28,12 +36,12 @@ describe("/", () => {
       describe("ERRORS", () => {
         it("INVALID METHOD status: 405 for invalid method", () => {
           return request
-          .put("/api/topics")
-          .expect(405)
-          .then(({ body }) => {
-            expect(body.msg).to.equal("Method Not Allowed");
-          });
-        })
+            .put("/api/topics")
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("Method Not Allowed");
+            });
+        });
       });
     });
     describe("/articles", () => {
@@ -158,7 +166,7 @@ describe("/", () => {
               });
           });
         });
-        describe('ERRORS', () => {
+        describe("ERRORS", () => {
           it("GET status:400 for invalid query", () => {
             return request
               .get("/api/articles?Snake=5")
@@ -169,12 +177,12 @@ describe("/", () => {
           });
           it("INVALID METHOD status: 405 for invalid method", () => {
             return request
-            .put("/api/articles")
-            .expect(405)
-            .then(({ body }) => {
-              expect(body.msg).to.equal("Method Not Allowed");
-            });
-          })
+              .put("/api/articles")
+              .expect(405)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Method Not Allowed");
+              });
+          });
         });
       });
       describe("/:article_id", () => {
@@ -273,12 +281,12 @@ describe("/", () => {
           });
           it("INVALID METHOD status: 405 for invalid method", () => {
             return request
-            .put("/api/articles/1")
-            .expect(405)
-            .then(({ body }) => {
-              expect(body.msg).to.equal("Method Not Allowed");
-            });
-          })
+              .put("/api/articles/1")
+              .expect(405)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Method Not Allowed");
+              });
+          });
         });
         describe("/comments", () => {
           describe("DEFAULT BEHAVIOURS", () => {
@@ -300,7 +308,10 @@ describe("/", () => {
                 });
             });
             it("POST status:201 returns a new comment that has been added to a specified article", () => {
-              input = {author: "butter_bridge", body: "This is a fake comment"}
+              input = {
+                author: "butter_bridge",
+                body: "This is a fake comment"
+              };
               return request
                 .post("/api/articles/1/comments")
                 .send(input)
@@ -309,10 +320,10 @@ describe("/", () => {
                   expect(body.comment).to.eql({
                     article_id: 1,
                     author: "butter_bridge",
-                   body: 'This is a fake comment',
-                   comment_id: 19,
-                   created_at: "2019-04-03T23:00:00.000Z",
-                   votes: 0,
+                    body: "This is a fake comment",
+                    comment_id: 19,
+                    created_at: "2019-04-04T23:00:00.000Z",
+                    votes: 0
                   });
                 });
             });
@@ -381,7 +392,10 @@ describe("/", () => {
                 });
             });
             it("POST status:400 for invalid article_id", () => {
-              input = {author: "butter_bridge", body: "This is a fake comment"}
+              input = {
+                author: "butter_bridge",
+                body: "This is a fake comment"
+              };
               return request
                 .post("/api/articles/Frank/comments")
                 .send(input)
@@ -391,7 +405,10 @@ describe("/", () => {
                 });
             });
             it("POST status:404 for non-existent article_id", () => {
-              input = {author: "butter_bridge", body: "This is a fake comment"}
+              input = {
+                author: "butter_bridge",
+                body: "This is a fake comment"
+              };
               return request
                 .post("/api/articles/200000/comments")
                 .send(input)
@@ -402,14 +419,17 @@ describe("/", () => {
             });
             it("INVALID METHOD status: 405 for invalid method", () => {
               return request
-              .put("/api/articles/1/comments")
-              .expect(405)
-              .then(({ body }) => {
-                expect(body.msg).to.equal("Method Not Allowed");
-              });
-            })
+                .put("/api/articles/1/comments")
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.equal("Method Not Allowed");
+                });
+            });
             it("POST status:422 for nonexistent username", () => {
-              input = {author: "Frank", body: "This is yet another fake comment"}
+              input = {
+                author: "Frank",
+                body: "This is yet another fake comment"
+              };
               return request
                 .post("/api/articles/1/comments")
                 .send(input)
@@ -487,12 +507,12 @@ describe("/", () => {
           });
           it("INVALID METHOD status: 405 for invalid method", () => {
             return request
-            .put("/api/comments/1")
-            .expect(405)
-            .then(({ body }) => {
-              expect(body.msg).to.equal("Method Not Allowed");
-            });
-          })
+              .put("/api/comments/1")
+              .expect(405)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Method Not Allowed");
+              });
+          });
         });
       });
     });
@@ -524,12 +544,12 @@ describe("/", () => {
           });
           it("INVALID METHOD status: 405 for invalid method", () => {
             return request
-            .put("/api/users/1")
-            .expect(405)
-            .then(({ body }) => {
-              expect(body.msg).to.equal("Method Not Allowed");
-            });
-          })
+              .put("/api/users/1")
+              .expect(405)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Method Not Allowed");
+              });
+          });
         });
       });
     });

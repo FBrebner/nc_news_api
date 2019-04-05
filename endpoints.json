@@ -1,0 +1,123 @@
+{
+  "GET /api": {
+    "description": "returns a json with all of the available endpoints of the api"
+  },
+  "GET /api/topics": {
+    "description": "returns an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+  "GET /api/articles": {
+    "description": "returns an array of all topics",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+      "articles": [
+        {
+          "title": "A",
+          "topic": "mitch",
+          "body": "Delicious tin of cat food",
+          "article_id": 6,
+          "author": "icellusedkars",
+          "comment_count": "1",
+          "created_at": "1998-11-20T00:00:00.000Z",
+          "votes": 0
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "returns an object of the specified article",
+    "queries": [],
+    "exampleResponse": {
+      "title": "A",
+      "topic": "mitch",
+      "body": "Delicious tin of cat food",
+      "article_id": 6,
+      "author": "icellusedkars",
+      "comment_count": "1",
+      "created_at": "1998-11-20T00:00:00.000Z",
+      "votes": 0
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "takes an object of the form { inc_votes: newVote } and returns an object of the specified article with an updated votes value",
+    "queries": [],
+    "exampleInput": { "inc_votes": 10 },
+    "exampleResponse": {
+      "title": "A",
+      "topic": "mitch",
+      "body": "Delicious tin of cat food",
+      "article_id": 6,
+      "author": "icellusedkars",
+      "comment_count": "1",
+      "created_at": "1998-11-20T00:00:00.000Z",
+      "votes": 10
+    }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes the specified article",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "returns an array of comments for the specified article",
+    "queries": ["sort_by", "order"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "article_id": 1,
+          "author": "butter_bridge",
+          "body": "This is a fake comment",
+          "comment_id": 19,
+          "created_at": "2019-04-03T23:00:00.000Z",
+          "votes": 0
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a new comment to an article and returns the new comment object",
+    "queries": [],
+    "exampleInput": {
+      "author": "butter_bridge",
+      "body": "This is a fake comment"
+    },
+    "exampleResponse": {
+      "article_id": 1,
+      "author": "butter_bridge",
+      "body": "This is a fake comment",
+      "comment_id": 19,
+      "created_at": "2019-04-03T23:00:00.000Z",
+      "votes": 0
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "takes an object of the form { inc_votes: newVote } and returns an object of the specified comment with an updated votes value",
+    "queries": [],
+    "exampleInput": { "inc_votes": 10 },
+    "exampleResponse": {
+      "article_id": 1,
+      "author": "butter_bridge",
+      "body": "This is a fake comment",
+      "comment_id": 19,
+      "created_at": "2019-04-03T23:00:00.000Z",
+      "votes": 10
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the specified article",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "GET /api/users/:user_id": {
+    "description": "returns an object of the specified user",
+    "queries": [],
+    "exampleResponse": {
+      "username": "icellusedkars",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+      "name": "sam"
+    }
+  }
+}
