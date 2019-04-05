@@ -1,4 +1,4 @@
-const endpoints = require('/Users/northcoders/nc_news_api/endpoints.json')
+const endpoints = require('../endpoints.json')
 
 
 exports.showAllEndpoints = (req, res, next) => {
