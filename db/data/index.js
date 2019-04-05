@@ -1,11 +1,16 @@
-const ENV = process.env.NODE_ENV || 'development';
+let ENV;
+if (process.env.NODE_ENV === "test") {
+  ENV = "test";
+} else {
+  ENV = "development";
+}
 
-const development = require('./dev-data');
-const test = require('./test-data');
+const development = require("./dev-data");
+const test = require("./test-data");
 
 const data = {
   development,
-  test,
+  test
 };
 
 module.exports = data[ENV];
