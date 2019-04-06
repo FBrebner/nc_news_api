@@ -26,13 +26,13 @@ exports.handle400 = (err, req, res, next) => {
 
 exports.handlePSQLErrors = (err, req, res, next) => {
   if (err.code === '23503' && err.constraint === 'comments_author_foreign'){
-    res.status(422).json({ error: `database error: ${err.code}`})
+    res.status(422).json({ msg: "Unprocessable Entity"})
   }
   else if (err.code === '23503'){
-    res.status(404).json({ error: `database error: ${err.code}`})
+    res.status(404).json({ msg: "Value Not Found"})
   }
   else if (err.code) {
-    res.status(400).json({ error: `database error: ${err.code}`})
+    res.status(400).json({  msg: "Invalid Value" })
   } else {
     next(err)
   }

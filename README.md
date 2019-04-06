@@ -1,5 +1,13 @@
 # nc_news_api
 
+ This api allows the user to easily set up the back end to a news site complete with a database that stores tables for all articles, topics, users and comments. 
+
+## 
+
+```
+hello
+```
+
 ## Available Scripts
 
 Create development and test databases locally:

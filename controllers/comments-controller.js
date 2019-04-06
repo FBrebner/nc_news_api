@@ -9,7 +9,7 @@ exports.patchSingleComment = (req, res, next) => {
 
 exports.deleteSingleComment = (req, res, next) => {
 
-    if (Number.isNaN(+req.params.comment_id)) {next({ status: 400})} else {
+    if (Number.isNaN(+req.params.comment_id) || (Number.isNaN(+req.body.inc_votes) && req.body.inc_votes!==undefined)) {next({ status: 400})} else {
     removeSingleComment(req.params.comment_id).then((check) =>{ 
         if (!check) {next({ status: 404})} else {res.status(204).json()}})
     }

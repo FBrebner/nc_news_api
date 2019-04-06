@@ -1,6 +1,6 @@
 const connection = require('../db/connection');
 
-exports.updateSingleComment = ( commentID, voteChange ) => {
+exports.updateSingleComment = ( commentID, voteChange=0 ) => {
     return connection('comments')
     .from('comments')
     .leftJoin('comments', 'comments.comment_id', '=', 'comments.comment_id')

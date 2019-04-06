@@ -13,7 +13,7 @@ exports.getSingleArticle = (req, res, next) => {
 };
 
 exports.patchSingleArticle = (req, res, next) => {
-    if (Number.isNaN(+req.params.article_id)) {next({ status: 400})} else {
+    if (Number.isNaN(+req.params.article_id) || (Number.isNaN(+req.body.inc_votes) && req.body.inc_votes!==undefined)) {next({ status: 400})} else {
     updateSingleArticle(req.params.article_id, req.body.inc_votes).then(([article]) =>{ 
         if (!article) {next({ status: 404})} else {res.status(200).json({ article })}})
     }

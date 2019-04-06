@@ -138,6 +138,33 @@ describe("/", () => {
                 });
               });
           });
+          it("GET status: 200 returns array of articles sorted by created_at when asked to sort_by an invalid query", () => {
+            return request
+              .get("/api/articles?sort_by=snakes")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.articles[0]).to.eql({
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
+                  article_id: 1,
+                  body: "I find this existence challenging",
+                  author: "butter_bridge",
+                  comment_count: "13",
+                  created_at: "2018-11-15T00:00:00.000Z",
+                  votes: 100
+                });
+                expect(body.articles[body.articles.length - 1]).to.eql({
+                  title: "Moustache",
+                  topic: "mitch",
+                  body: "Have you seen the size of that thing?",
+                  article_id: 12,
+                  author: "butter_bridge",
+                  comment_count: "0",
+                  created_at: "1974-11-26T00:00:00.000Z",
+                  votes: 0
+                });
+              });
+          });
           it("GET status: 200 returns array of articles in a specified order", () => {
             return request
               .get("/api/articles?order=asc")
@@ -172,7 +199,7 @@ describe("/", () => {
               .get("/api/articles?Snake=5")
               .expect(400)
               .then(({ body }) => {
-                expect(body.error).to.equal("database error: 42703");
+                expect(body.msg).to.equal("Invalid Value");
               });
           });
           it("INVALID METHOD status: 405 for invalid method", () => {
@@ -222,6 +249,24 @@ describe("/", () => {
                 });
               });
           });
+          it("PATCH status:200 returns a single article object unmodified if given an empty body", () => {
+            const input = { };
+            return request
+              .patch("/api/articles/1")
+              .send(input)
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.article).to.eql({
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
+                  article_id: 1,
+                  author: "butter_bridge",
+                  body: "I find this existence challenging",
+                  created_at: "2018-11-15T00:00:00.000Z",
+                  votes: 100
+                });
+              });
+          });
           it("DELETE status:204 removes an article and returns non content", () => {
             return request.delete("/api/articles/1").expect(204);
           });
@@ -265,6 +310,16 @@ describe("/", () => {
             const input = { inc_votes: 1 };
             return request
               .patch("/api/articles/Frank")
+              .send(input)
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("Invalid Value");
+              });
+          });
+          it("PATCH status:400 for invalid article_id", () => {
+            const input = { inc_votes: 'Frank' };
+            return request
+              .patch("/api/articles/1")
               .send(input)
               .expect(400)
               .then(({ body }) => {
@@ -322,7 +377,7 @@ describe("/", () => {
                     author: "butter_bridge",
                     body: "This is a fake comment",
                     comment_id: 19,
-                    created_at: "2019-04-04T23:00:00.000Z",
+                    created_at: "2019-04-05T23:00:00.000Z",
                     votes: 0
                   });
                 });
@@ -347,6 +402,28 @@ describe("/", () => {
                     votes: 16,
                     created_at: "2000-11-26T00:00:00.000Z",
                     body: "This morning, I showered for nine minutes.",
+                    author: "butter_bridge"
+                  });
+                });
+            });
+            it("GET status: 200 returns array of comments sorted by created_at if given invalid sort-by query", () => {
+              return request
+                .get("/api/articles/1/comments?sort_by=snake")
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.comments[body.comments.length - 1]).to.eql({
+                    comment_id: 18,
+                    votes: 16,
+                    created_at: "2000-11-26T00:00:00.000Z",
+                    body: "This morning, I showered for nine minutes.",
+                    author: "butter_bridge"
+                  });
+                  expect(body.comments[0]).to.eql({
+                    comment_id: 2,
+                    votes: 14,
+                    created_at: "2016-11-22T00:00:00.000Z",
+                    body:
+                      "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
                     author: "butter_bridge"
                   });
                 });
@@ -410,11 +487,11 @@ describe("/", () => {
                 body: "This is a fake comment"
               };
               return request
-                .post("/api/articles/200000/comments")
+                .post("/api/articles/20000/comments")
                 .send(input)
                 .expect(404)
                 .then(({ body }) => {
-                  expect(body.error).to.equal("database error: 23503");
+                  expect(body.msg).to.equal("Value Not Found");
                 });
             });
             it("INVALID METHOD status: 405 for invalid method", () => {
@@ -435,8 +512,7 @@ describe("/", () => {
                 .send(input)
                 .expect(422)
                 .then(({ body }) => {
-                  console.log(body.error);
-                  expect(body.error).to.eql("database error: 23503");
+                  expect(body.msg).to.eql("Unprocessable Entity");
                 });
             });
           });
