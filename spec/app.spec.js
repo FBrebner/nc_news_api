@@ -138,6 +138,33 @@ describe("/", () => {
                 });
               });
           });
+          it("GET status: 200 returns array of articles sorted by comment count", () => {
+            return request
+              .get("/api/articles?sort_by=comment_count")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.articles[body.articles.length - 1]).to.eql({
+                  title: "Moustache",
+                  topic: "mitch",
+                  body: "Have you seen the size of that thing?",
+                  article_id: 12,
+                  author: "butter_bridge",
+                  comment_count: "0",
+                  created_at: "1974-11-26T00:00:00.000Z",
+                  votes: 0
+                });
+                expect(body.articles[0]).to.eql({
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
+                  body: "I find this existence challenging",
+                  article_id: 1,
+                  author: "butter_bridge",
+                  created_at: "2018-11-15T00:00:00.000Z",
+                  votes: 100,
+                  comment_count: "13"
+                });
+              });
+          });
           it("GET status: 200 returns array of articles sorted by created_at when asked to sort_by an invalid query", () => {
             return request
               .get("/api/articles?sort_by=snakes")
@@ -377,7 +404,7 @@ describe("/", () => {
                     author: "butter_bridge",
                     body: "This is a fake comment",
                     comment_id: 19,
-                    created_at: "2019-04-05T23:00:00.000Z",
+                    created_at: "2019-04-23T23:00:00.000Z",
                     votes: 0
                   });
                 });

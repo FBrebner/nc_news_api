@@ -1,7 +1,7 @@
 const connection = require('../db/connection');
 
 exports.selectArticles = ({sort_by = 'created_at',order = 'desc', ...otherQueries}) => {
-    const sortCategories = ['author', 'body', 'title', 'article_id', 'topic', 'created_at', 'votes']
+    const sortCategories = ['author', 'body', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count']
     if (!sortCategories.includes(sort_by)) {sort_by='created_at'}
    return connection('articles')
     .select('articles.author', 'articles.body', 'title', 'articles.article_id', 'topic', 'articles.created_at', 'articles.votes')
